@@ -160,25 +160,29 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             } else {
                 sendResponse({success: false, error: 'Not connected to server'});
             }
+            // 不需要返回true，因为我们同步发送响应
             break;
             
         case 'agent_activated':
             console.log('Agent activated');
             // 可以在这里通知服务器插件已激活
+            // 不需要异步响应
             break;
             
         case 'content_script_loaded':
             console.log('Content script loaded');
             // 内容脚本加载完成
+            // 不需要异步响应
             break;
             
         default:
             console.warn('Unknown message type:', request.type);
             sendResponse({success: false, error: 'Unknown message type'});
+            // 不需要返回true，因为我们同步发送响应
     }
     
-    // 保持消息通道开放以发送异步响应
-    return true;
+    // 只有在需要异步响应时才返回true
+    // 在这个实现中，我们同步发送所有响应，所以不需要返回true
 });
 
 // 激活插件功能
@@ -189,12 +193,6 @@ function activatePlugin() {
         // 如果已经激活，则取消激活
         isActivated = false;
         disconnectFromServer();
-        // 更新图标状态（如果图标文件存在）
-        if (chrome.action && chrome.action.setIcon) {
-            chrome.action.setIcon({path: 'icon.png'}).catch(err => {
-                console.warn('Failed to set icon:', err);
-            });
-        }
         console.log('Web Page Saver deactivated');
         
         // 通知devtools面板插件已停用
@@ -206,12 +204,6 @@ function activatePlugin() {
         // 激活插件
         isActivated = true;
         connectToServer();
-        // 更新图标状态（如果图标文件存在）
-        if (chrome.action && chrome.action.setIcon) {
-            chrome.action.setIcon({path: 'icon.png'}).catch(err => {
-                console.warn('Failed to set icon:', err);
-            });
-        }
         console.log('Web Page Saver activated');
         
         // 通知devtools面板插件已激活
@@ -244,18 +236,31 @@ chrome.runtime.onConnect.addListener(function(port) {
         devtoolsPorts.push(port);
         console.log("Devtools panel connected, total panels:", devtoolsPorts.length);
         
-        // 监听来自devtools面板的消息
+        // 发送当前插件状态
+        try {
+            port.postMessage({
+                type: 'plugin_status',
+                data: {status: isActivated ? 'activated' : 'deactivated'}
+            });
+            console.log("Sent initial plugin status to devtools panel");
+        } catch (e) {
+            console.error("Failed to send initial plugin status:", e);
+        }
+        
         port.onMessage.addListener(function(message) {
-            console.log("Message from devtools panel:", message);
+            console.log("Received message from devtools panel:", message);
+            // 处理来自devtools面板的消息
+            if (message.type === "panel_initialized") {
+                console.log("Devtools panel initialized for tab:", message.tabId);
+            }
         });
         
-        // 监听devtools面板断开连接
         port.onDisconnect.addListener(function() {
-            console.log("Devtools panel disconnected");
             const index = devtoolsPorts.indexOf(port);
             if (index !== -1) {
                 devtoolsPorts.splice(index, 1);
             }
+            console.log("Devtools panel disconnected, remaining panels:", devtoolsPorts.length);
         });
     }
 });
