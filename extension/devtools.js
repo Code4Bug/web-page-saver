@@ -2,13 +2,14 @@
 
 // 确保在devtools环境中执行
 if (chrome.devtools && chrome.devtools.panels) {
-  // 创建一个新的开发者工具面板
+  // 创建一个新的面板
   chrome.devtools.panels.create(
-    "Web Page Saver", // 面板的标题
-    "icon.png",       // 面板的图标
-    "panel.html",     // 面板的HTML页面
-    function(panel) {
-      console.log("DevTools panel created!");
+    "Web Page Saver",     // 面板标题
+    "",                   // 面板图标路径（空字符串表示无图标）
+    "panel.html",         // 面板页面
+    function(panel) {     // 面板创建回调
+      // 面板创建后的处理逻辑
+      console.log("Web Page Saver DevTools panel created");
     }
   );
 } else {
