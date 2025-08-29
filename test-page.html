@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Page Saver 测试页面</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-element {
+            padding: 20px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .highlight {
+            background-color: #ffffcc;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .primary {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .secondary {
+            background-color: #008CBA;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>Web Page Saver 测试页面</h1>
+    
+    <div class="test-element" id="element1">
+        <h2>测试元素 1</h2>
+        <p>这是一个用于测试的 div 元素，具有 ID "element1"。</p>
+        <button class="primary">主要按钮</button>
+        <button class="secondary">次要按钮</button>
+    </div>
+    
+    <div class="test-element" id="element2">
+        <h2>测试元素 2</h2>
+        <p>这是另一个测试元素，具有 ID "element2"。</p>
+        <ul>
+            <li>列表项 1</li>
+            <li>列表项 2</li>
+            <li>列表项 3</li>
+        </ul>
+    </div>
+    
+    <div class="test-element">
+        <h2>测试元素 3</h2>
+        <p>这个元素没有 ID，但有 class "test-element"。</p>
+        <form>
+            <input type="text" placeholder="输入文本">
+            <input type="submit" value="提交">
+        </form>
+    </div>
+    
+    <div class="test-element highlight">
+        <h2>测试元素 4</h2>
+        <p>这个元素有多个 class："test-element" 和 "highlight"。</p>
+        <a href="#">这是一个链接</a>
+    </div>
+    
+    <script>
+        // 添加一些交互事件
+        document.addEventListener('DOMContentLoaded', function() {
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(button => {
+                button.addEventListener('click', function() {
+                    alert(`按钮 "${this.textContent}" 被点击了！`);
+                });
+            });
+            
+            const links = document.querySelectorAll('a');
+            links.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    alert('链接被点击了！');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
